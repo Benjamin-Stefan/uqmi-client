@@ -10,9 +10,21 @@ import { SSHOptions } from "../types";
 function logDebug(message: string, debug?: boolean) {
     if (debug) {
         // Sanitize the message to remove sensitive information
-        const sanitizedMessage = message.replace(/--password=\S+/g, '--password=****');
+        const sanitizedMessage = sanitizeSensitiveData(message);
         console.log(`[DEBUG] ${sanitizedMessage}`);
     }
+}
+
+/**
+ * Sanitizes a message to remove sensitive information such as passwords, usernames, and other credentials.
+ * @param {string} message - The message to sanitize.
+ * @returns {string} The sanitized message.
+ */
+function sanitizeSensitiveData(message: string): string {
+    return message
+        .replace(/--password=\S+/g, '--password=****')
+        .replace(/--username=\S+/g, '--username=****')
+        .replace(/--apn=\S+/g, '--apn=****');
 }
 
 /**
