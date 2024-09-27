@@ -42,9 +42,11 @@ export class UqmiClient {
      */
     protected async runCommand(args: string[]): Promise<string> {
         try {
+            args.unshift(`--device=${this.device}`);
+
             // Escape all arguments before concatenating them into a single command string
             const escapedArgs = args.map(this.escapeShellArg).join(" ");
-            const stdout = await runSSHCommand(`uqmi --device=${this.device} ${escapedArgs}`, this.sshOptions);
+            const stdout = await runSSHCommand(`uqmi ${escapedArgs}`, this.sshOptions);
             return stdout.trim();
         } catch (error) {
             throw new Error(`Error executing uqmi command: ${error}`);

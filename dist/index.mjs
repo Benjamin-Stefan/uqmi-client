@@ -101,8 +101,9 @@ var UqmiClient = class {
    */
   async runCommand(args) {
     try {
+      args.unshift(`--device=${this.device}`);
       const escapedArgs = args.map(this.escapeShellArg).join(" ");
-      const stdout = await runSSHCommand(`uqmi --device=${this.device} ${escapedArgs}`, this.sshOptions);
+      const stdout = await runSSHCommand(`uqmi ${escapedArgs}`, this.sshOptions);
       return stdout.trim();
     } catch (error) {
       throw new Error(`Error executing uqmi command: ${error}`);
