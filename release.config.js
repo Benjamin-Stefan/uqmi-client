@@ -1,6 +1,6 @@
 export default {
     branches: ["main"],
-    repositoryUrl: "https://github.com/Benjamin-Stefan/ant-plus-next",
+    repositoryUrl: "https://github.com/Benjamin-Stefan/uqmi-client",
     plugins: [
         [
             "@semantic-release/commit-analyzer",
