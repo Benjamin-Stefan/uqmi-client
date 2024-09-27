@@ -11,7 +11,11 @@ function logDebug(message: string, debug?: boolean) {
     if (debug) {
         // Sanitize the message to remove sensitive information
         const sanitizedMessage = sanitizeSensitiveData(message);
-        console.log(`[DEBUG] ${sanitizedMessage}`);
+        if (!sanitizedMessage.includes("password") && !sanitizedMessage.includes("username") && !sanitizedMessage.includes("apn")) {
+            console.log(`[DEBUG] ${sanitizedMessage}`);
+        } else {
+            console.log(`[DEBUG] Sensitive information omitted`);
+        }
     }
 }
 
@@ -24,7 +28,9 @@ function sanitizeSensitiveData(message: string): string {
     return message
         .replace(/--password=\S+/g, '--password=****')
         .replace(/--username=\S+/g, '--username=****')
-        .replace(/--apn=\S+/g, '--apn=****');
+        .replace(/--apn=\S+/g, '--apn=****')
+        .replace(/--auth-type=\S+/g, '--auth-type=****')
+        .replace(/--ip-family=\S+/g, '--ip-family=****');
 }
 
 /**
