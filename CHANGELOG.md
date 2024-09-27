@@ -1,3 +1,15 @@
+### Version: 1.0.1  
+Released on: 2024-09-27
+
+
+### 🐛 Bug Fixes
+
+* resolve dependency issues in package.json and update README badges ([8e038c65d29093cc2a0d6a52359a8ef6658febd9](/commit/8e038c65d29093cc2a0d6a52359a8ef6658febd9))
+
+
+
+---
+
 ### Version: 1.0.0  
 Released on: 2024-09-27
 
