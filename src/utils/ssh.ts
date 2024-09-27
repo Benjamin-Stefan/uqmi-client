@@ -3,19 +3,10 @@ import { readFileSync } from "fs";
 import { SSHOptions } from "../types";
 
 /**
- * Logs debug messages if the debug option is enabled.
- * @param {string} message - The debug message to log.
- * @param {boolean} [debug=false] - Whether to log the debug message.
- */
-function logDebug(message: string, debug?: boolean) {
-    if (debug) {
-        console.log(`[DEBUG] ${message}`);
-    }
-}
-
-/**
  * Creates an SSH connection using the provided options.
+ *
  * @param {SSHOptions} options - The SSH connection options.
+ *
  * @returns {Promise<Client>} A promise that resolves with the SSH client when the connection is ready.
  * @throws {Error} If the connection fails or if the private key file cannot be loaded.
  *
@@ -53,6 +44,7 @@ function createSSHConnection(options: SSHOptions): Promise<Client> {
                 }
                 throw error;
             }
+
             if (options.passphrase) {
                 connectOptions.passphrase = options.passphrase;
             }
@@ -61,7 +53,6 @@ function createSSHConnection(options: SSHOptions): Promise<Client> {
         }
 
         conn.on("ready", () => {
-            logDebug("SSH connection established", options.debug);
             resolve(conn);
         })
             .on("error", (err) => {
@@ -75,7 +66,7 @@ function createSSHConnection(options: SSHOptions): Promise<Client> {
  * Executes a command on the SSH server.
  * @param {Client} conn - The SSH client connection.
  * @param {string} command - The command to be executed on the SSH server.
- * @param {boolean} [debug=false] - Whether to enable debug logging for the command execution.
+ *
  * @returns {Promise<string>} A promise that resolves with the command output as a string.
  * @throws {Error} If there is an error during command execution or if the command fails.
  *
@@ -88,18 +79,18 @@ function createSSHConnection(options: SSHOptions): Promise<Client> {
  *     console.error('Command failed:', error);
  *   });
  */
-function executeCommand(conn: Client, command: string, debug?: boolean): Promise<string> {
+function executeCommand(conn: Client, command: string): Promise<string> {
     return new Promise((resolve, reject) => {
-        logDebug(`Executing command: ${command}`, debug);
         conn.exec(command, (err, stream) => {
-            if (err) return reject(new Error("Command execution failed: " + err.message));
+            if (err) {
+                return reject(new Error("Command execution failed: " + err.message));
+            }
 
             let stdout = "";
             let stderr = "";
 
             stream
                 .on("close", (code: number, signal: string | null) => {
-                    logDebug(`Command closed with code: ${code}, signal: ${signal}`, debug);
                     conn.end(); // Close connection
                     if (stderr) {
                         return reject(new Error("Error output: " + stderr));
@@ -120,6 +111,7 @@ function executeCommand(conn: Client, command: string, debug?: boolean): Promise
  * Runs a command on a remote SSH server.
  * @param {string} command - The SSH command to execute.
  * @param {SSHOptions} options - The SSH connection options.
+ *
  * @returns {Promise<string>} A promise that resolves with the output of the executed command.
  * @throws {Error} If there is an error with the SSH connection or command execution.
  *
@@ -140,7 +132,7 @@ function executeCommand(conn: Client, command: string, debug?: boolean): Promise
 export async function runSSHCommand(command: string, options: SSHOptions): Promise<string> {
     try {
         const conn = await createSSHConnection(options);
-        const output = await executeCommand(conn, command, options.debug);
+        const output = await executeCommand(conn, command);
         return output;
     } catch (error: unknown) {
         if (error instanceof Error) {

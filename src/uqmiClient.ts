@@ -23,15 +23,28 @@ export class UqmiClient {
     }
 
     /**
+     * Escapes shell arguments to prevent command injection.
+     * This function escapes dangerous characters and ensures that inputs are safe.
+     * @param {string} arg - The argument to escape.
+     * @returns {string} The escaped argument.
+     */
+    private escapeShellArg(arg: string): string {
+        // Replace single quotes in the argument and wrap it in single quotes
+        return `'${arg.replace(/'/g, `'\\''`)}'`;
+    }
+
+    /**
      * Executes a uqmi command via SSH.
      * @protected
      * @param {string} command - The uqmi command to execute.
      * @returns {Promise<string>} The trimmed stdout response from the command.
      * @throws {Error} If the command execution fails.
      */
-    protected async runCommand(command: string): Promise<string> {
+    protected async runCommand(args: string[]): Promise<string> {
         try {
-            const stdout = await runSSHCommand(`uqmi --device=${this.device} ${command}`, this.sshOptions);
+            // Escape all arguments before concatenating them into a single command string
+            const escapedArgs = args.map(this.escapeShellArg).join(" ");
+            const stdout = await runSSHCommand(`uqmi --device=${this.device} ${escapedArgs}`, this.sshOptions);
             return stdout.trim();
         } catch (error) {
             throw new Error(`Error executing uqmi command: ${error}`);
@@ -43,7 +56,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The service versions.
      */
     public async getVersions(): Promise<string> {
-        return this.runCommand("--get-versions");
+        return this.runCommand(["--get-versions"]);
     }
 
     /**
@@ -53,7 +66,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the command execution.
      */
     public async setClientId(serviceName: string, clientId: string): Promise<string> {
-        return this.runCommand(`--set-client-id ${serviceName},${clientId}`);
+        return this.runCommand([`--set-client-id ${serviceName},${clientId}`]);
     }
 
     /**
@@ -62,7 +75,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The client ID.
      */
     public async getClientId(serviceName: string): Promise<string> {
-        return this.runCommand(`--get-client-id ${serviceName}`);
+        return this.runCommand([`--get-client-id ${serviceName}`]);
     }
 
     /**
@@ -70,7 +83,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the synchronization.
      */
     public async sync(): Promise<string> {
-        return this.runCommand("--sync");
+        return this.runCommand(["--sync"]);
     }
 
     /**
@@ -83,10 +96,10 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the network start.
      */
     public async startNetwork(apn: string, authType: "pap" | "chap" | "both" | "none", username?: string, password?: string, ipFamily: "ipv4" | "ipv6" | "unspecified" = "unspecified"): Promise<string> {
-        let command = `--start-network --apn=${apn} --auth-type=${authType} --ip-family=${ipFamily}`;
-        if (username) command += ` --username=${username}`;
-        if (password) command += ` --password=${password}`;
-        return this.runCommand(command);
+        const args = [`--start-network`, `--apn=${apn}`, `--auth-type=${authType}`, `--ip-family=${ipFamily}`];
+        if (username) args.push(`--username=${username}`);
+        if (password) args.push(`--password=${password}`);
+        return this.runCommand(args);
     }
 
     /**
@@ -96,9 +109,9 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the network stop.
      */
     public async stopNetwork(pdh: string, autoconnect = false): Promise<string> {
-        let command = `--stop-network ${pdh}`;
-        if (autoconnect) command += ` --autoconnect`;
-        return this.runCommand(command);
+        let args = [`--stop-network ${pdh}`];
+        if (autoconnect) args.push(` --autoconnect`);
+        return this.runCommand(args);
     }
 
     /**
@@ -106,7 +119,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The current data status.
      */
     public async getDataStatus(): Promise<string> {
-        return this.runCommand("--get-data-status");
+        return this.runCommand(["--get-data-status"]);
     }
 
     /**
@@ -115,7 +128,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the IP family change.
      */
     public async setIPFamily(ipFamily: "ipv4" | "ipv6" | "unspecified"): Promise<string> {
-        return this.runCommand(`--set-ip-family ${ipFamily}`);
+        return this.runCommand([`--set-ip-family ${ipFamily}`]);
     }
 
     /**
@@ -124,7 +137,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the autoconnect state change.
      */
     public async setAutoconnect(value: "disabled" | "enabled" | "paused"): Promise<string> {
-        return this.runCommand(`--set-autoconnect ${value}`);
+        return this.runCommand([`--set-autoconnect ${value}`]);
     }
 
     /**
@@ -132,7 +145,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The current network settings.
      */
     public async getCurrentSettings(): Promise<string> {
-        return this.runCommand("--get-current-settings");
+        return this.runCommand(["--get-current-settings"]);
     }
 
     /**
@@ -140,7 +153,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The device capabilities.
      */
     public async getCapabilities(): Promise<string> {
-        return this.runCommand("--get-capabilities");
+        return this.runCommand(["--get-capabilities"]);
     }
 
     /**
@@ -148,7 +161,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The PIN status.
      */
     public async getPinStatus(): Promise<string> {
-        return this.runCommand("--get-pin-status");
+        return this.runCommand(["--get-pin-status"]);
     }
 
     /**
@@ -157,7 +170,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the PIN1 verification.
      */
     public async verifyPin1(pin: string): Promise<string> {
-        return this.runCommand(`--verify-pin1 ${pin}`);
+        return this.runCommand([`--verify-pin1 ${pin}`]);
     }
 
     /**
@@ -166,7 +179,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the PIN2 verification.
      */
     public async verifyPin2(pin: string): Promise<string> {
-        return this.runCommand(`--verify-pin2 ${pin}`);
+        return this.runCommand([`--verify-pin2 ${pin}`]);
     }
 
     /**
@@ -176,7 +189,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the PIN1 protection change.
      */
     public async setPin1Protection(state: "enabled" | "disabled", pin: string): Promise<string> {
-        return this.runCommand(`--set-pin1-protection ${state} --pin ${pin}`);
+        return this.runCommand([`--set-pin1-protection ${state}`, `--pin ${pin}`]);
     }
 
     /**
@@ -186,7 +199,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the PIN2 protection change.
      */
     public async setPin2Protection(state: "enabled" | "disabled", pin2: string): Promise<string> {
-        return this.runCommand(`--set-pin2-protection ${state} --pin ${pin2}`);
+        return this.runCommand([`--set-pin2-protection ${state}`, `--pin ${pin2}`]);
     }
 
     /**
@@ -196,7 +209,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the PIN1 change.
      */
     public async changePin1(oldPin: string, newPin: string): Promise<string> {
-        return this.runCommand(`--change-pin1 --pin ${oldPin} --new-pin ${newPin}`);
+        return this.runCommand([`--change-pin1`, `--pin ${oldPin}`, `--new-pin ${newPin}`]);
     }
 
     /**
@@ -206,7 +219,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the PIN2 change.
      */
     public async changePin2(oldPin: string, newPin: string): Promise<string> {
-        return this.runCommand(`--change-pin2 --pin ${oldPin} --new-pin ${newPin}`);
+        return this.runCommand([`--change-pin2`, `--pin ${oldPin}`, `--new-pin ${newPin}`]);
     }
 
     /**
@@ -216,7 +229,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the PIN1 unblock.
      */
     public async unblockPin1(puk: string, newPin: string): Promise<string> {
-        return this.runCommand(`--unblock-pin1 --puk ${puk} --new-pin ${newPin}`);
+        return this.runCommand([`--unblock-pin1`, `--puk ${puk}`, `--new-pin ${newPin}`]);
     }
 
     /**
@@ -226,7 +239,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the PIN2 unblock.
      */
     public async unblockPin2(puk: string, newPin: string): Promise<string> {
-        return this.runCommand(`--unblock-pin2 --puk ${puk} --new-pin ${newPin}`);
+        return this.runCommand([`--unblock-pin2`, `--puk ${puk}`, `--new-pin ${newPin}`]);
     }
 
     /**
@@ -234,7 +247,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The ICCID.
      */
     public async getICCID(): Promise<string> {
-        return this.runCommand("--get-iccid");
+        return this.runCommand(["--get-iccid"]);
     }
 
     /**
@@ -242,7 +255,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The IMSI.
      */
     public async getIMSI(): Promise<string> {
-        return this.runCommand("--get-imsi");
+        return this.runCommand(["--get-imsi"]);
     }
 
     /**
@@ -250,7 +263,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The IMEI.
      */
     public async getIMEI(): Promise<string> {
-        return this.runCommand("--get-imei");
+        return this.runCommand(["--get-imei"]);
     }
 
     /**
@@ -258,7 +271,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The MSISDN.
      */
     public async getMSISDN(): Promise<string> {
-        return this.runCommand("--get-msisdn");
+        return this.runCommand(["--get-msisdn"]);
     }
 
     /**
@@ -266,7 +279,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the DMS reset.
      */
     public async resetDMS(): Promise<string> {
-        return this.runCommand("--reset-dms");
+        return this.runCommand(["--reset-dms"]);
     }
 
     /**
@@ -274,7 +287,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The device operating mode.
      */
     public async getDeviceOperatingMode(): Promise<string> {
-        return this.runCommand("--get-device-operating-mode");
+        return this.runCommand(["--get-device-operating-mode"]);
     }
 
     /**
@@ -283,7 +296,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the mode change.
      */
     public async setDeviceOperatingMode(mode: "online" | "low_power" | "factory_test" | "offline" | "reset" | "shutting_down" | "persistent_low_power" | "mode_only_low_power"): Promise<string> {
-        return this.runCommand(`--set-device-operating-mode ${mode}`);
+        return this.runCommand([`--set-device-operating-mode ${mode}`]);
     }
 
     /**
@@ -291,7 +304,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the FCC authorization.
      */
     public async setFCCAuth(): Promise<string> {
-        return this.runCommand("--fcc-auth");
+        return this.runCommand(["--fcc-auth"]);
     }
 
     /**
@@ -300,7 +313,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the PIN1 verification.
      */
     public async uimVerifyPin1(pin: string): Promise<string> {
-        return this.runCommand(`--uim-verify-pin1 ${pin}`);
+        return this.runCommand([`--uim-verify-pin1 ${pin}`]);
     }
 
     /**
@@ -309,7 +322,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the PIN2 verification.
      */
     public async uimVerifyPin2(pin: string): Promise<string> {
-        return this.runCommand(`--uim-verify-pin2 ${pin}`);
+        return this.runCommand([`--uim-verify-pin2 ${pin}`]);
     }
 
     /**
@@ -317,7 +330,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The SIM state.
      */
     public async getSIMState(): Promise<string> {
-        return this.runCommand("--uim-get-sim-state");
+        return this.runCommand(["--uim-get-sim-state"]);
     }
 
     /**
@@ -327,7 +340,7 @@ export class UqmiClient {
      */
     public async setNetworkModes(modes: string[]): Promise<string> {
         const modeString = modes.join(",");
-        return this.runCommand(`--set-network-modes ${modeString}`);
+        return this.runCommand([`--set-network-modes ${modeString}`]);
     }
 
     /**
@@ -335,7 +348,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The results of the network scan.
      */
     public async networkScan(): Promise<string> {
-        return this.runCommand("--network-scan");
+        return this.runCommand(["--network-scan"]);
     }
 
     /**
@@ -343,7 +356,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the network registration.
      */
     public async networkRegister(): Promise<string> {
-        return this.runCommand("--network-register");
+        return this.runCommand(["--network-register"]);
     }
 
     /**
@@ -353,7 +366,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the PLMN setting.
      */
     public async setPLMN(mcc: string, mnc: string): Promise<string> {
-        return this.runCommand(`--set-plmn --mcc ${mcc} --mnc ${mnc}`);
+        return this.runCommand([`--set-plmn`, `--mcc ${mcc}`, `--mnc ${mnc}`]);
     }
 
     /**
@@ -361,7 +374,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The PLMN information.
      */
     public async getPLMN(): Promise<string> {
-        return this.runCommand("--get-plmn");
+        return this.runCommand(["--get-plmn"]);
     }
 
     /**
@@ -369,7 +382,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The signal information.
      */
     public async getSignalInfo(): Promise<string> {
-        return this.runCommand("--get-signal-info");
+        return this.runCommand(["--get-signal-info"]);
     }
 
     /**
@@ -378,7 +391,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The list of SMS messages.
      */
     public async listMessages(storage: "sim" | "me" = "sim"): Promise<string> {
-        return this.runCommand(`--list-messages --storage ${storage}`);
+        return this.runCommand([`--list-messages`, `--storage ${storage}`]);
     }
 
     /**
@@ -388,7 +401,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the SMS deletion.
      */
     public async deleteMessage(id: number, storage: "sim" | "me" = "sim"): Promise<string> {
-        return this.runCommand(`--delete-message ${id} --storage ${storage}`);
+        return this.runCommand([`--delete-message ${id}`, `--storage ${storage}`]);
     }
 
     /**
@@ -398,7 +411,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The content of the SMS message.
      */
     public async getMessage(id: number, storage: "sim" | "me" = "sim"): Promise<string> {
-        return this.runCommand(`--get-message ${id} --storage ${storage}`);
+        return this.runCommand([`--get-message ${id}`, `--storage ${storage}`]);
     }
 
     /**
@@ -408,7 +421,7 @@ export class UqmiClient {
      * @returns {Promise<string>} The raw content of the SMS message.
      */
     public async getRawMessage(id: number, storage: "sim" | "me" = "sim"): Promise<string> {
-        return this.runCommand(`--get-raw-message ${id} --storage ${storage}`);
+        return this.runCommand([`--get-raw-message ${id}`, `--storage ${storage}`]);
     }
 
     /**
@@ -420,10 +433,10 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the SMS sending.
      */
     public async sendMessage(destinationNumber: string, message: string, flash: boolean = false, smsc?: string): Promise<string> {
-        let command = `--send-message ${message} --send-message-target ${destinationNumber}`;
-        if (flash) command += " --send-message-flash";
-        if (smsc) command += ` --send-message-smsc ${smsc}`;
-        return this.runCommand(command);
+        let args = [`--send-message ${message}`, `--send-message-target ${destinationNumber}`];
+        if (flash) args.push(" --send-message-flash");
+        if (smsc) args.push(` --send-message-smsc ${smsc}`);
+        return this.runCommand(args);
     }
 
     /**
@@ -432,7 +445,7 @@ export class UqmiClient {
      * @returns {Promise<string>} Confirmation of the data format setting.
      */
     public async setDataFormat(type: "802.3" | "raw-ip"): Promise<string> {
-        return this.runCommand(`--wda-set-data-format ${type}`);
+        return this.runCommand([`--wda-set-data-format ${type}`]);
     }
 
     /**
@@ -440,6 +453,6 @@ export class UqmiClient {
      * @returns {Promise<string>} The current data format.
      */
     public async getDataFormat(): Promise<string> {
-        return this.runCommand("--wda-get-data-format");
+        return this.runCommand(["--wda-get-data-format"]);
     }
 }

@@ -13,13 +13,20 @@ export declare class UqmiClient {
      */
     constructor(device: string, sshOptions: SSHOptions);
     /**
+     * Escapes shell arguments to prevent command injection.
+     * This function escapes dangerous characters and ensures that inputs are safe.
+     * @param {string} arg - The argument to escape.
+     * @returns {string} The escaped argument.
+     */
+    private escapeShellArg;
+    /**
      * Executes a uqmi command via SSH.
      * @protected
      * @param {string} command - The uqmi command to execute.
      * @returns {Promise<string>} The trimmed stdout response from the command.
      * @throws {Error} If the command execution fails.
      */
-    protected runCommand(command: string): Promise<string>;
+    protected runCommand(args: string[]): Promise<string>;
     /**
      * Retrieves the service versions.
      * @returns {Promise<string>} The service versions.

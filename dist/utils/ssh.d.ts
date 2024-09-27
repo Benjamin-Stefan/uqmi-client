@@ -3,6 +3,7 @@ import { SSHOptions } from "../types";
  * Runs a command on a remote SSH server.
  * @param {string} command - The SSH command to execute.
  * @param {SSHOptions} options - The SSH connection options.
+ *
  * @returns {Promise<string>} A promise that resolves with the output of the executed command.
  * @throws {Error} If there is an error with the SSH connection or command execution.
  *

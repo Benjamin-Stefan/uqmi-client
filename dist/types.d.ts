@@ -1,6 +1,6 @@
 /**
  * Defines the options required for establishing an SSH connection, providing details about
- * the target server, authentication method, and optional debug settings.
+ * the target server, authentication method, and optional settings.
  *
  * @property {string} host - The SSH server hostname or IP address.
  * @property {number} [port=22] - The port to connect to (default is 22).
@@ -8,7 +8,6 @@
  * @property {string} [password] - The password for authentication (used if no private key is provided).
  * @property {string} [privateKeyPath] - The path to the private key file for authentication (if password is not used).
  * @property {string} [passphrase] - The passphrase to unlock the private key (if the key is encrypted).
- * @property {boolean} [debug=false] - Enables debug logging if set to true, useful for troubleshooting.
  *
  * @example
  * const options = {
@@ -17,7 +16,6 @@
  *   username: 'user',
  *   privateKeyPath: '/path/to/key',
  *   passphrase: 'my-passphrase',
- *   debug: true
  * };
  */
 export interface SSHOptions {
@@ -27,7 +25,6 @@ export interface SSHOptions {
     password?: string;
     privateKeyPath?: string;
     passphrase?: string;
-    debug?: boolean;
 }
 /**
  * Enum-like type that defines various service types supported by the system.

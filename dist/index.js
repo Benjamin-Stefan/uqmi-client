@@ -27,11 +27,6 @@ module.exports = __toCommonJS(src_exports);
 // src/utils/ssh.ts
 var import_ssh2 = require("ssh2");
 var import_fs = require("fs");
-function logDebug(message, debug) {
-  if (debug) {
-    console.log(`[DEBUG] ${message}`);
-  }
-}
 function createSSHConnection(options) {
   return new Promise((resolve, reject) => {
     const conn = new import_ssh2.Client();
@@ -58,22 +53,21 @@ function createSSHConnection(options) {
       return reject(new Error("Password or private key must be provided."));
     }
     conn.on("ready", () => {
-      logDebug("SSH connection established", options.debug);
       resolve(conn);
     }).on("error", (err) => {
       reject(new Error("Connection error: " + err.message));
     }).connect(connectOptions);
   });
 }
-function executeCommand(conn, command, debug) {
+function executeCommand(conn, command) {
   return new Promise((resolve, reject) => {
-    logDebug(`Executing command: ${command}`, debug);
     conn.exec(command, (err, stream) => {
-      if (err) return reject(new Error("Command execution failed: " + err.message));
+      if (err) {
+        return reject(new Error("Command execution failed: " + err.message));
+      }
       let stdout = "";
       let stderr = "";
       stream.on("close", (code, signal) => {
-        logDebug(`Command closed with code: ${code}, signal: ${signal}`, debug);
         conn.end();
         if (stderr) {
           return reject(new Error("Error output: " + stderr));
@@ -90,7 +84,7 @@ function executeCommand(conn, command, debug) {
 async function runSSHCommand(command, options) {
   try {
     const conn = await createSSHConnection(options);
-    const output = await executeCommand(conn, command, options.debug);
+    const output = await executeCommand(conn, command);
     return output;
   } catch (error) {
     if (error instanceof Error) {
@@ -116,15 +110,25 @@ var UqmiClient = class {
     this.sshOptions = sshOptions;
   }
   /**
+   * Escapes shell arguments to prevent command injection.
+   * This function escapes dangerous characters and ensures that inputs are safe.
+   * @param {string} arg - The argument to escape.
+   * @returns {string} The escaped argument.
+   */
+  escapeShellArg(arg) {
+    return `'${arg.replace(/'/g, `'\\''`)}'`;
+  }
+  /**
    * Executes a uqmi command via SSH.
    * @protected
    * @param {string} command - The uqmi command to execute.
    * @returns {Promise<string>} The trimmed stdout response from the command.
    * @throws {Error} If the command execution fails.
    */
-  async runCommand(command) {
+  async runCommand(args) {
     try {
-      const stdout = await runSSHCommand(`uqmi --device=${this.device} ${command}`, this.sshOptions);
+      const escapedArgs = args.map(this.escapeShellArg).join(" ");
+      const stdout = await runSSHCommand(`uqmi --device=${this.device} ${escapedArgs}`, this.sshOptions);
       return stdout.trim();
     } catch (error) {
       throw new Error(`Error executing uqmi command: ${error}`);
@@ -135,7 +139,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} The service versions.
    */
   async getVersions() {
-    return this.runCommand("--get-versions");
+    return this.runCommand(["--get-versions"]);
   }
   /**
    * Sets the client ID for a specific service.
@@ -144,7 +148,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the command execution.
    */
   async setClientId(serviceName, clientId) {
-    return this.runCommand(`--set-client-id ${serviceName},${clientId}`);
+    return this.runCommand([`--set-client-id ${serviceName},${clientId}`]);
   }
   /**
    * Retrieves the client ID for a specific service.
@@ -152,14 +156,14 @@ var UqmiClient = class {
    * @returns {Promise<string>} The client ID.
    */
   async getClientId(serviceName) {
-    return this.runCommand(`--get-client-id ${serviceName}`);
+    return this.runCommand([`--get-client-id ${serviceName}`]);
   }
   /**
    * Synchronizes all client IDs.
    * @returns {Promise<string>} Confirmation of the synchronization.
    */
   async sync() {
-    return this.runCommand("--sync");
+    return this.runCommand(["--sync"]);
   }
   /**
    * Starts the network connection with the specified parameters.
@@ -171,10 +175,10 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the network start.
    */
   async startNetwork(apn, authType, username, password, ipFamily = "unspecified") {
-    let command = `--start-network --apn=${apn} --auth-type=${authType} --ip-family=${ipFamily}`;
-    if (username) command += ` --username=${username}`;
-    if (password) command += ` --password=${password}`;
-    return this.runCommand(command);
+    const args = [`--start-network`, `--apn=${apn}`, `--auth-type=${authType}`, `--ip-family=${ipFamily}`];
+    if (username) args.push(`--username=${username}`);
+    if (password) args.push(`--password=${password}`);
+    return this.runCommand(args);
   }
   /**
    * Stops the network connection.
@@ -183,16 +187,16 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the network stop.
    */
   async stopNetwork(pdh, autoconnect = false) {
-    let command = `--stop-network ${pdh}`;
-    if (autoconnect) command += ` --autoconnect`;
-    return this.runCommand(command);
+    let args = [`--stop-network ${pdh}`];
+    if (autoconnect) args.push(` --autoconnect`);
+    return this.runCommand(args);
   }
   /**
    * Retrieves the current data status.
    * @returns {Promise<string>} The current data status.
    */
   async getDataStatus() {
-    return this.runCommand("--get-data-status");
+    return this.runCommand(["--get-data-status"]);
   }
   /**
    * Sets the IP family.
@@ -200,7 +204,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the IP family change.
    */
   async setIPFamily(ipFamily) {
-    return this.runCommand(`--set-ip-family ${ipFamily}`);
+    return this.runCommand([`--set-ip-family ${ipFamily}`]);
   }
   /**
    * Sets the autoconnect feature.
@@ -208,28 +212,28 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the autoconnect state change.
    */
   async setAutoconnect(value) {
-    return this.runCommand(`--set-autoconnect ${value}`);
+    return this.runCommand([`--set-autoconnect ${value}`]);
   }
   /**
    * Retrieves the current network settings.
    * @returns {Promise<string>} The current network settings.
    */
   async getCurrentSettings() {
-    return this.runCommand("--get-current-settings");
+    return this.runCommand(["--get-current-settings"]);
   }
   /**
    * Retrieves the device capabilities.
    * @returns {Promise<string>} The device capabilities.
    */
   async getCapabilities() {
-    return this.runCommand("--get-capabilities");
+    return this.runCommand(["--get-capabilities"]);
   }
   /**
    * Retrieves the PIN status.
    * @returns {Promise<string>} The PIN status.
    */
   async getPinStatus() {
-    return this.runCommand("--get-pin-status");
+    return this.runCommand(["--get-pin-status"]);
   }
   /**
    * Verifies PIN1.
@@ -237,7 +241,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the PIN1 verification.
    */
   async verifyPin1(pin) {
-    return this.runCommand(`--verify-pin1 ${pin}`);
+    return this.runCommand([`--verify-pin1 ${pin}`]);
   }
   /**
    * Verifies PIN2.
@@ -245,7 +249,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the PIN2 verification.
    */
   async verifyPin2(pin) {
-    return this.runCommand(`--verify-pin2 ${pin}`);
+    return this.runCommand([`--verify-pin2 ${pin}`]);
   }
   /**
    * Sets the protection for PIN1.
@@ -254,7 +258,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the PIN1 protection change.
    */
   async setPin1Protection(state, pin) {
-    return this.runCommand(`--set-pin1-protection ${state} --pin ${pin}`);
+    return this.runCommand([`--set-pin1-protection ${state}`, `--pin ${pin}`]);
   }
   /**
    * Sets the protection for PIN2.
@@ -263,7 +267,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the PIN2 protection change.
    */
   async setPin2Protection(state, pin2) {
-    return this.runCommand(`--set-pin2-protection ${state} --pin ${pin2}`);
+    return this.runCommand([`--set-pin2-protection ${state}`, `--pin ${pin2}`]);
   }
   /**
    * Changes PIN1.
@@ -272,7 +276,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the PIN1 change.
    */
   async changePin1(oldPin, newPin) {
-    return this.runCommand(`--change-pin1 --pin ${oldPin} --new-pin ${newPin}`);
+    return this.runCommand([`--change-pin1`, `--pin ${oldPin}`, `--new-pin ${newPin}`]);
   }
   /**
    * Changes PIN2.
@@ -281,7 +285,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the PIN2 change.
    */
   async changePin2(oldPin, newPin) {
-    return this.runCommand(`--change-pin2 --pin ${oldPin} --new-pin ${newPin}`);
+    return this.runCommand([`--change-pin2`, `--pin ${oldPin}`, `--new-pin ${newPin}`]);
   }
   /**
    * Unblocks PIN1 using PUK.
@@ -290,7 +294,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the PIN1 unblock.
    */
   async unblockPin1(puk, newPin) {
-    return this.runCommand(`--unblock-pin1 --puk ${puk} --new-pin ${newPin}`);
+    return this.runCommand([`--unblock-pin1`, `--puk ${puk}`, `--new-pin ${newPin}`]);
   }
   /**
    * Unblocks PIN2 using PUK.
@@ -299,49 +303,49 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the PIN2 unblock.
    */
   async unblockPin2(puk, newPin) {
-    return this.runCommand(`--unblock-pin2 --puk ${puk} --new-pin ${newPin}`);
+    return this.runCommand([`--unblock-pin2`, `--puk ${puk}`, `--new-pin ${newPin}`]);
   }
   /**
    * Retrieves the ICCID (Integrated Circuit Card Identifier).
    * @returns {Promise<string>} The ICCID.
    */
   async getICCID() {
-    return this.runCommand("--get-iccid");
+    return this.runCommand(["--get-iccid"]);
   }
   /**
    * Retrieves the IMSI (International Mobile Subscriber Identity).
    * @returns {Promise<string>} The IMSI.
    */
   async getIMSI() {
-    return this.runCommand("--get-imsi");
+    return this.runCommand(["--get-imsi"]);
   }
   /**
    * Retrieves the IMEI (International Mobile Equipment Identity).
    * @returns {Promise<string>} The IMEI.
    */
   async getIMEI() {
-    return this.runCommand("--get-imei");
+    return this.runCommand(["--get-imei"]);
   }
   /**
    * Retrieves the MSISDN (Mobile Station International Subscriber Directory Number).
    * @returns {Promise<string>} The MSISDN.
    */
   async getMSISDN() {
-    return this.runCommand("--get-msisdn");
+    return this.runCommand(["--get-msisdn"]);
   }
   /**
    * Resets the DMS service.
    * @returns {Promise<string>} Confirmation of the DMS reset.
    */
   async resetDMS() {
-    return this.runCommand("--reset-dms");
+    return this.runCommand(["--reset-dms"]);
   }
   /**
    * Retrieves the current device operating mode.
    * @returns {Promise<string>} The device operating mode.
    */
   async getDeviceOperatingMode() {
-    return this.runCommand("--get-device-operating-mode");
+    return this.runCommand(["--get-device-operating-mode"]);
   }
   /**
    * Sets the device operating mode.
@@ -349,14 +353,14 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the mode change.
    */
   async setDeviceOperatingMode(mode) {
-    return this.runCommand(`--set-device-operating-mode ${mode}`);
+    return this.runCommand([`--set-device-operating-mode ${mode}`]);
   }
   /**
    * Executes FCC authorization.
    * @returns {Promise<string>} Confirmation of the FCC authorization.
    */
   async setFCCAuth() {
-    return this.runCommand("--fcc-auth");
+    return this.runCommand(["--fcc-auth"]);
   }
   /**
    * Verifies PIN1 for new devices.
@@ -364,7 +368,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the PIN1 verification.
    */
   async uimVerifyPin1(pin) {
-    return this.runCommand(`--uim-verify-pin1 ${pin}`);
+    return this.runCommand([`--uim-verify-pin1 ${pin}`]);
   }
   /**
    * Verifies PIN2 for new devices.
@@ -372,14 +376,14 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the PIN2 verification.
    */
   async uimVerifyPin2(pin) {
-    return this.runCommand(`--uim-verify-pin2 ${pin}`);
+    return this.runCommand([`--uim-verify-pin2 ${pin}`]);
   }
   /**
    * Retrieves the SIM card state.
    * @returns {Promise<string>} The SIM state.
    */
   async getSIMState() {
-    return this.runCommand("--uim-get-sim-state");
+    return this.runCommand(["--uim-get-sim-state"]);
   }
   /**
    * Sets the network modes.
@@ -388,21 +392,21 @@ var UqmiClient = class {
    */
   async setNetworkModes(modes) {
     const modeString = modes.join(",");
-    return this.runCommand(`--set-network-modes ${modeString}`);
+    return this.runCommand([`--set-network-modes ${modeString}`]);
   }
   /**
    * Performs a network scan.
    * @returns {Promise<string>} The results of the network scan.
    */
   async networkScan() {
-    return this.runCommand("--network-scan");
+    return this.runCommand(["--network-scan"]);
   }
   /**
    * Initiates network registration.
    * @returns {Promise<string>} Confirmation of the network registration.
    */
   async networkRegister() {
-    return this.runCommand("--network-register");
+    return this.runCommand(["--network-register"]);
   }
   /**
    * Sets the PLMN (Public Land Mobile Network).
@@ -411,21 +415,21 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the PLMN setting.
    */
   async setPLMN(mcc, mnc) {
-    return this.runCommand(`--set-plmn --mcc ${mcc} --mnc ${mnc}`);
+    return this.runCommand([`--set-plmn`, `--mcc ${mcc}`, `--mnc ${mnc}`]);
   }
   /**
    * Retrieves the PLMN (Public Land Mobile Network).
    * @returns {Promise<string>} The PLMN information.
    */
   async getPLMN() {
-    return this.runCommand("--get-plmn");
+    return this.runCommand(["--get-plmn"]);
   }
   /**
    * Retrieves signal information.
    * @returns {Promise<string>} The signal information.
    */
   async getSignalInfo() {
-    return this.runCommand("--get-signal-info");
+    return this.runCommand(["--get-signal-info"]);
   }
   /**
    * Lists SMS messages.
@@ -433,7 +437,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} The list of SMS messages.
    */
   async listMessages(storage = "sim") {
-    return this.runCommand(`--list-messages --storage ${storage}`);
+    return this.runCommand([`--list-messages`, `--storage ${storage}`]);
   }
   /**
    * Deletes an SMS message.
@@ -442,7 +446,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the SMS deletion.
    */
   async deleteMessage(id, storage = "sim") {
-    return this.runCommand(`--delete-message ${id} --storage ${storage}`);
+    return this.runCommand([`--delete-message ${id}`, `--storage ${storage}`]);
   }
   /**
    * Retrieves an SMS message.
@@ -451,7 +455,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} The content of the SMS message.
    */
   async getMessage(id, storage = "sim") {
-    return this.runCommand(`--get-message ${id} --storage ${storage}`);
+    return this.runCommand([`--get-message ${id}`, `--storage ${storage}`]);
   }
   /**
    * Retrieves the raw content of an SMS message.
@@ -460,7 +464,7 @@ var UqmiClient = class {
    * @returns {Promise<string>} The raw content of the SMS message.
    */
   async getRawMessage(id, storage = "sim") {
-    return this.runCommand(`--get-raw-message ${id} --storage ${storage}`);
+    return this.runCommand([`--get-raw-message ${id}`, `--storage ${storage}`]);
   }
   /**
    * Sends an SMS message.
@@ -471,10 +475,10 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the SMS sending.
    */
   async sendMessage(destinationNumber, message, flash = false, smsc) {
-    let command = `--send-message ${message} --send-message-target ${destinationNumber}`;
-    if (flash) command += " --send-message-flash";
-    if (smsc) command += ` --send-message-smsc ${smsc}`;
-    return this.runCommand(command);
+    let args = [`--send-message ${message}`, `--send-message-target ${destinationNumber}`];
+    if (flash) args.push(" --send-message-flash");
+    if (smsc) args.push(` --send-message-smsc ${smsc}`);
+    return this.runCommand(args);
   }
   /**
    * Sets the data format.
@@ -482,14 +486,14 @@ var UqmiClient = class {
    * @returns {Promise<string>} Confirmation of the data format setting.
    */
   async setDataFormat(type) {
-    return this.runCommand(`--wda-set-data-format ${type}`);
+    return this.runCommand([`--wda-set-data-format ${type}`]);
   }
   /**
    * Retrieves the data format.
    * @returns {Promise<string>} The current data format.
    */
   async getDataFormat() {
-    return this.runCommand("--wda-get-data-format");
+    return this.runCommand(["--wda-get-data-format"]);
   }
 };
 // Annotate the CommonJS export names for ESM import in node:

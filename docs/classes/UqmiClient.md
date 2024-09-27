@@ -36,7 +36,7 @@ If the device is not specified.
 
 #### Defined in
 
-uqmiClient.ts:17
+[uqmiClient.ts:17](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L17)
 
 ## Methods
 
@@ -64,7 +64,7 @@ Confirmation of the PIN1 change.
 
 #### Defined in
 
-uqmiClient.ts:198
+[uqmiClient.ts:211](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L211)
 
 ***
 
@@ -92,7 +92,7 @@ Confirmation of the PIN2 change.
 
 #### Defined in
 
-uqmiClient.ts:208
+[uqmiClient.ts:221](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L221)
 
 ***
 
@@ -120,7 +120,7 @@ Confirmation of the SMS deletion.
 
 #### Defined in
 
-uqmiClient.ts:390
+[uqmiClient.ts:403](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L403)
 
 ***
 
@@ -138,7 +138,7 @@ The device capabilities.
 
 #### Defined in
 
-uqmiClient.ts:142
+[uqmiClient.ts:155](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L155)
 
 ***
 
@@ -162,7 +162,7 @@ The client ID.
 
 #### Defined in
 
-uqmiClient.ts:64
+[uqmiClient.ts:77](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L77)
 
 ***
 
@@ -180,7 +180,7 @@ The current network settings.
 
 #### Defined in
 
-uqmiClient.ts:134
+[uqmiClient.ts:147](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L147)
 
 ***
 
@@ -198,7 +198,7 @@ The current data format.
 
 #### Defined in
 
-uqmiClient.ts:442
+[uqmiClient.ts:455](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L455)
 
 ***
 
@@ -216,7 +216,7 @@ The current data status.
 
 #### Defined in
 
-uqmiClient.ts:108
+[uqmiClient.ts:121](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L121)
 
 ***
 
@@ -234,7 +234,7 @@ The device operating mode.
 
 #### Defined in
 
-uqmiClient.ts:276
+[uqmiClient.ts:289](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L289)
 
 ***
 
@@ -252,7 +252,7 @@ The ICCID.
 
 #### Defined in
 
-uqmiClient.ts:236
+[uqmiClient.ts:249](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L249)
 
 ***
 
@@ -270,7 +270,7 @@ The IMEI.
 
 #### Defined in
 
-uqmiClient.ts:252
+[uqmiClient.ts:265](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L265)
 
 ***
 
@@ -288,7 +288,7 @@ The IMSI.
 
 #### Defined in
 
-uqmiClient.ts:244
+[uqmiClient.ts:257](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L257)
 
 ***
 
@@ -316,7 +316,7 @@ The content of the SMS message.
 
 #### Defined in
 
-uqmiClient.ts:400
+[uqmiClient.ts:413](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L413)
 
 ***
 
@@ -334,7 +334,7 @@ The MSISDN.
 
 #### Defined in
 
-uqmiClient.ts:260
+[uqmiClient.ts:273](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L273)
 
 ***
 
@@ -352,7 +352,7 @@ The PIN status.
 
 #### Defined in
 
-uqmiClient.ts:150
+[uqmiClient.ts:163](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L163)
 
 ***
 
@@ -370,7 +370,7 @@ The PLMN information.
 
 #### Defined in
 
-uqmiClient.ts:363
+[uqmiClient.ts:376](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L376)
 
 ***
 
@@ -398,7 +398,7 @@ The raw content of the SMS message.
 
 #### Defined in
 
-uqmiClient.ts:410
+[uqmiClient.ts:423](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L423)
 
 ***
 
@@ -416,7 +416,7 @@ The signal information.
 
 #### Defined in
 
-uqmiClient.ts:371
+[uqmiClient.ts:384](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L384)
 
 ***
 
@@ -434,7 +434,7 @@ The SIM state.
 
 #### Defined in
 
-uqmiClient.ts:319
+[uqmiClient.ts:332](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L332)
 
 ***
 
@@ -452,7 +452,7 @@ The service versions.
 
 #### Defined in
 
-uqmiClient.ts:45
+[uqmiClient.ts:58](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L58)
 
 ***
 
@@ -476,7 +476,7 @@ The list of SMS messages.
 
 #### Defined in
 
-uqmiClient.ts:380
+[uqmiClient.ts:393](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L393)
 
 ***
 
@@ -494,7 +494,7 @@ Confirmation of the network registration.
 
 #### Defined in
 
-uqmiClient.ts:345
+[uqmiClient.ts:358](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L358)
 
 ***
 
@@ -512,7 +512,7 @@ The results of the network scan.
 
 #### Defined in
 
-uqmiClient.ts:337
+[uqmiClient.ts:350](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L350)
 
 ***
 
@@ -530,7 +530,7 @@ Confirmation of the DMS reset.
 
 #### Defined in
 
-uqmiClient.ts:268
+[uqmiClient.ts:281](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L281)
 
 ***
 
@@ -566,7 +566,7 @@ Confirmation of the SMS sending.
 
 #### Defined in
 
-uqmiClient.ts:422
+[uqmiClient.ts:435](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L435)
 
 ***
 
@@ -590,7 +590,7 @@ Confirmation of the autoconnect state change.
 
 #### Defined in
 
-uqmiClient.ts:126
+[uqmiClient.ts:139](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L139)
 
 ***
 
@@ -618,7 +618,7 @@ Confirmation of the command execution.
 
 #### Defined in
 
-uqmiClient.ts:55
+[uqmiClient.ts:68](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L68)
 
 ***
 
@@ -642,7 +642,7 @@ Confirmation of the data format setting.
 
 #### Defined in
 
-uqmiClient.ts:434
+[uqmiClient.ts:447](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L447)
 
 ***
 
@@ -666,7 +666,7 @@ Confirmation of the mode change.
 
 #### Defined in
 
-uqmiClient.ts:285
+[uqmiClient.ts:298](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L298)
 
 ***
 
@@ -684,7 +684,7 @@ Confirmation of the FCC authorization.
 
 #### Defined in
 
-uqmiClient.ts:293
+[uqmiClient.ts:306](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L306)
 
 ***
 
@@ -708,7 +708,7 @@ Confirmation of the IP family change.
 
 #### Defined in
 
-uqmiClient.ts:117
+[uqmiClient.ts:130](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L130)
 
 ***
 
@@ -732,7 +732,7 @@ Confirmation of the network mode setting.
 
 #### Defined in
 
-uqmiClient.ts:328
+[uqmiClient.ts:341](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L341)
 
 ***
 
@@ -760,7 +760,7 @@ Confirmation of the PIN1 protection change.
 
 #### Defined in
 
-uqmiClient.ts:178
+[uqmiClient.ts:191](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L191)
 
 ***
 
@@ -788,7 +788,7 @@ Confirmation of the PIN2 protection change.
 
 #### Defined in
 
-uqmiClient.ts:188
+[uqmiClient.ts:201](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L201)
 
 ***
 
@@ -816,7 +816,7 @@ Confirmation of the PLMN setting.
 
 #### Defined in
 
-uqmiClient.ts:355
+[uqmiClient.ts:368](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L368)
 
 ***
 
@@ -856,7 +856,7 @@ Confirmation of the network start.
 
 #### Defined in
 
-uqmiClient.ts:85
+[uqmiClient.ts:98](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L98)
 
 ***
 
@@ -884,7 +884,7 @@ Confirmation of the network stop.
 
 #### Defined in
 
-uqmiClient.ts:98
+[uqmiClient.ts:111](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L111)
 
 ***
 
@@ -902,7 +902,7 @@ Confirmation of the synchronization.
 
 #### Defined in
 
-uqmiClient.ts:72
+[uqmiClient.ts:85](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L85)
 
 ***
 
@@ -926,7 +926,7 @@ Confirmation of the PIN1 verification.
 
 #### Defined in
 
-uqmiClient.ts:302
+[uqmiClient.ts:315](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L315)
 
 ***
 
@@ -950,7 +950,7 @@ Confirmation of the PIN2 verification.
 
 #### Defined in
 
-uqmiClient.ts:311
+[uqmiClient.ts:324](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L324)
 
 ***
 
@@ -978,7 +978,7 @@ Confirmation of the PIN1 unblock.
 
 #### Defined in
 
-uqmiClient.ts:218
+[uqmiClient.ts:231](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L231)
 
 ***
 
@@ -1006,7 +1006,7 @@ Confirmation of the PIN2 unblock.
 
 #### Defined in
 
-uqmiClient.ts:228
+[uqmiClient.ts:241](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L241)
 
 ***
 
@@ -1030,7 +1030,7 @@ Confirmation of the PIN1 verification.
 
 #### Defined in
 
-uqmiClient.ts:159
+[uqmiClient.ts:172](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L172)
 
 ***
 
@@ -1054,4 +1054,4 @@ Confirmation of the PIN2 verification.
 
 #### Defined in
 
-uqmiClient.ts:168
+[uqmiClient.ts:181](https://github.com/Benjamin-Stefan/uqmi-client/blob/e557872d4823dbec246cea342738cb90b7d1751f/src/uqmiClient.ts#L181)

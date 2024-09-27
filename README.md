@@ -20,8 +20,9 @@ Here’s an example of how to use the library to start a network session:
 ```javascript
 import { UqmiClient } from "uqmi-client";
 
-const client = new UqmiClient("/dev/cdc-wdm0", {
+const client = new UqmiClient("cdc-wdm0", {
     host: "192.168.1.1",
+    port: 22,
     username: "user",
     password: "password",
 });
@@ -49,7 +50,6 @@ const client = new UqmiClient("/dev/cdc-wdm0", {
  * @property {string} [password] - The password for authentication (used if no private key is provided).
  * @property {string} [privateKeyPath] - The path to the private key file for authentication (if password is not used).
  * @property {string} [passphrase] - The passphrase to unlock the private key (if the key is encrypted).
- * @property {boolean} [debug=false] - Enables debug logging if set to true, useful for troubleshooting.
  */
 export interface SSHOptions {
     host: string;
@@ -58,7 +58,6 @@ export interface SSHOptions {
     password?: string;
     privateKeyPath?: string;
     passphrase?: string;
-    debug?: boolean;
 }
 ```
 

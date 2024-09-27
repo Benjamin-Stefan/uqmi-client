@@ -1,6 +1,6 @@
 /**
  * Defines the options required for establishing an SSH connection, providing details about
- * the target server, authentication method, and optional debug settings.
+ * the target server, authentication method, and optional settings.
  *
  * @property {string} host - The SSH server hostname or IP address.
  * @property {number} [port=22] - The port to connect to (default is 22).
@@ -8,7 +8,6 @@
  * @property {string} [password] - The password for authentication (used if no private key is provided).
  * @property {string} [privateKeyPath] - The path to the private key file for authentication (if password is not used).
  * @property {string} [passphrase] - The passphrase to unlock the private key (if the key is encrypted).
- * @property {boolean} [debug=false] - Enables debug logging if set to true, useful for troubleshooting.
  *
  * @example
  * const options = {
@@ -17,7 +16,6 @@
  *   username: 'user',
  *   privateKeyPath: '/path/to/key',
  *   passphrase: 'my-passphrase',
- *   debug: true
  * };
  */
 interface SSHOptions {
@@ -27,7 +25,6 @@ interface SSHOptions {
     password?: string;
     privateKeyPath?: string;
     passphrase?: string;
-    debug?: boolean;
 }
 
 /**
@@ -44,13 +41,20 @@ declare class UqmiClient {
      */
     constructor(device: string, sshOptions: SSHOptions);
     /**
+     * Escapes shell arguments to prevent command injection.
+     * This function escapes dangerous characters and ensures that inputs are safe.
+     * @param {string} arg - The argument to escape.
+     * @returns {string} The escaped argument.
+     */
+    private escapeShellArg;
+    /**
      * Executes a uqmi command via SSH.
      * @protected
      * @param {string} command - The uqmi command to execute.
      * @returns {Promise<string>} The trimmed stdout response from the command.
      * @throws {Error} If the command execution fails.
      */
-    protected runCommand(command: string): Promise<string>;
+    protected runCommand(args: string[]): Promise<string>;
     /**
      * Retrieves the service versions.
      * @returns {Promise<string>} The service versions.
