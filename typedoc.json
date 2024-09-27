@@ -1,0 +1,16 @@
+{
+    "entryPoints": ["src/index.ts"],
+    "out": "docs",
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "excludeExternals": true,
+    "excludeNotDocumented": true,
+    "includeVersion": true,
+    "readme": "none",
+    "name": "UqmiClient",
+    "plugin": ["typedoc-plugin-markdown"],
+    "tsconfig": "./tsconfig.json",
+    "categorizeByGroup": true,
+    "categoryOrder": ["Drivers", "Sensors"],
+    "theme": "default"
+}

@@ -1,20 +1,49 @@
 {
     "name": "uqmi-client",
     "version": "1.0.0",
-    "main": "dist/index.js",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.mjs",
     "types": "dist/index.d.ts",
     "scripts": {
-        "build": "tsc --noEmit",
-        "prepare": "npm run build",
-        "lint": "eslint 'src/**/*.{ts,tsx}'",
-        "format": "prettier --write 'src/**/*.{ts,tsx}'"
+        "lint": "eslint eslint.config.mjs",
+        "lint:fix": "eslint eslint.config.mjs --fix",
+        "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
+        "build": "npm run build:clean && npm run build:types && npm run build:bundle",
+        "build:clean": "rimraf dist && mkdir dist",
+        "build:typescript": "tsc",
+        "build:types": "tsc --declaration --declarationMap --emitDeclarationOnly --outDir dist",
+        "build:docs": "typedoc",
+        "build:bundle": "tsup src/index.ts --format cjs,esm --dts",
+        "prepublishOnly": "npm run lint && npm run build:docs && npm run build",
+        "release": "semantic-release"
     },
     "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "author": {
+        "name": "Benjamin Stefan",
+        "email": "contact@benjamin-stefan.eu"
+    },
+    "license": "MIT",
     "description": "",
+    "files": [
+        "dist/**/*",
+        "README.md",
+        "LICENSE",
+        "package.json"
+    ],
+    "directories": {
+        "lib": "./src"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Benjamin-Stefan/uqmi-client.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Benjamin-Stefan/uqmi-client/issues"
+    },
+    "homepage": "https://github.com/Benjamin-Stefan/uqmi-client#readme",
     "devDependencies": {
-        "@types/node": "^22.7.3",
+        "@types/node": "^22.7.4",
+        "@types/ssh2": "^1.15.1",
         "@typescript-eslint/eslint-plugin": "^8.7.0",
         "@typescript-eslint/parser": "^8.7.0",
         "eslint": "^9.11.1",
@@ -22,9 +51,17 @@
         "eslint-plugin-prettier": "^5.2.1",
         "np": "^10.0.7",
         "prettier": "^3.3.3",
+        "rimraf": "^6.0.1",
+        "semantic-release": "^24.1.2",
+        "tsup": "^8.3.0",
+        "typedoc": "^0.26.7",
+        "typedoc-plugin-markdown": "^4.2.8",
         "typescript": "^5.6.2"
     },
     "dependencies": {
-        "tslib": "^2.7.0"
+        "@semantic-release/changelog": "^6.0.3",
+        "@semantic-release/git": "^10.0.1",
+        "@semantic-release/github": "^11.0.0",
+        "ssh2": "^1.16.0"
     }
 }
