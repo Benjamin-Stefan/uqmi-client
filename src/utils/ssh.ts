@@ -9,7 +9,9 @@ import { SSHOptions } from "../types";
  */
 function logDebug(message: string, debug?: boolean) {
     if (debug) {
-        console.log(`[DEBUG] ${message}`);
+        // Sanitize the message to remove sensitive information
+        const sanitizedMessage = message.replace(/--password=\S+/g, '--password=****');
+        console.log(`[DEBUG] ${sanitizedMessage}`);
     }
 }
 
