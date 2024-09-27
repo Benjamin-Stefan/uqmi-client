@@ -1,6 +1,7 @@
 # UqmiClient
 
-[![npm version](https://badge.fury.io/js/uqmi-client.svg)](https://badge.fury.io/js/uqmi-client)
+[![npm version](https://img.shields.io/npm/v/uqmi-client)](https://www.npmjs.com/package/uqmi-client)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/Benjamin-Stefan/uqmi-client/ci.yml?branch=main)](https://github.com/Benjamin-Stefan/uqmi-client/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 UqmiClient is a Node.js library for managing network-related commands over SSH, specifically designed to work with UQMI-compatible devices.

@@ -42,6 +42,9 @@
     },
     "homepage": "https://github.com/Benjamin-Stefan/uqmi-client#readme",
     "devDependencies": {
+        "@semantic-release/changelog": "^6.0.3",
+        "@semantic-release/git": "^10.0.1",
+        "@semantic-release/github": "^11.0.0",
         "@types/node": "^22.7.4",
         "@types/ssh2": "^1.15.1",
         "@typescript-eslint/eslint-plugin": "^8.7.0",
@@ -60,9 +63,6 @@
         "typescript": "^5.6.2"
     },
     "dependencies": {
-        "@semantic-release/changelog": "^6.0.3",
-        "@semantic-release/git": "^10.0.1",
-        "@semantic-release/github": "^11.0.0",
         "ssh2": "^1.16.0"
     }
 }
