@@ -1,8 +1,8 @@
-**UqmiClient v1.0.0** • **Docs**
+**UqmiClient v1.0.2** • **Docs**
 
 ***
 
-# UqmiClient v1.0.0
+# UqmiClient v1.0.2
 
 ## Classes
 
