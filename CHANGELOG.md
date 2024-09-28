@@ -1,3 +1,15 @@
+### Version: 1.0.2  
+Released on: 2024-09-28
+
+
+### 🐛 Bug Fixes
+
+* correct main property in package.json ([fc72470a66bcfd61ef4de3b571e076cbf243af21](/commit/fc72470a66bcfd61ef4de3b571e076cbf243af21))
+
+
+
+---
+
 ### Version: 1.0.1  
 Released on: 2024-09-27
 
