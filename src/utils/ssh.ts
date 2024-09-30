@@ -1,6 +1,7 @@
-import { Client, ConnectConfig } from "ssh2";
-import { readFileSync } from "fs";
+import { Client, ClientChannel, ConnectConfig } from "ssh2";
+import { promises as fs } from "fs";
 import { SSHOptions } from "../types";
+import { once } from "events";
 
 /**
  * Creates an SSH connection using the provided options.
@@ -24,42 +25,34 @@ import { SSHOptions } from "../types";
  *     console.error('Connection failed:', error);
  *   });
  */
-function createSSHConnection(options: SSHOptions): Promise<Client> {
-    return new Promise((resolve, reject) => {
-        const conn = new Client();
-        const connectOptions: ConnectConfig = {
-            host: options.host,
-            port: options.port || 22,
-            username: options.username,
-        };
+async function createSSHConnection(options: SSHOptions): Promise<Client> {
+    const conn = new Client();
+    const connectOptions: ConnectConfig = {
+        host: options.host,
+        port: options.port || 22,
+        username: options.username,
+        readyTimeout: 20000,
+    };
 
-        if (options.password) {
-            connectOptions.password = options.password;
-        } else if (options.privateKeyPath) {
-            try {
-                connectOptions.privateKey = readFileSync(options.privateKeyPath);
-            } catch (error) {
-                if (error instanceof Error) {
-                    return reject(new Error("Error loading private key: " + error.message));
-                }
-                throw error;
-            }
-
-            if (options.passphrase) {
-                connectOptions.passphrase = options.passphrase;
-            }
-        } else {
-            return reject(new Error("Password or private key must be provided."));
+    if (options.password) {
+        connectOptions.password = options.password;
+    } else if (options.privateKeyPath) {
+        try {
+            connectOptions.privateKey = await fs.readFile(options.privateKeyPath);
+        } catch (error) {
+            throw new Error(`Error loading private key: ${(error as Error).message}`);
         }
 
-        conn.on("ready", () => {
-            resolve(conn);
-        })
-            .on("error", (err) => {
-                reject(new Error("Connection error: " + err.message));
-            })
-            .connect(connectOptions);
-    });
+        if (options.passphrase) {
+            connectOptions.passphrase = options.passphrase;
+        }
+    } else {
+        throw new Error("Password or private key must be provided.");
+    }
+
+    conn.connect(connectOptions);
+    await once(conn, "ready");
+    return conn;
 }
 
 /**
@@ -79,32 +72,34 @@ function createSSHConnection(options: SSHOptions): Promise<Client> {
  *     console.error('Command failed:', error);
  *   });
  */
-function executeCommand(conn: Client, command: string): Promise<string> {
-    return new Promise((resolve, reject) => {
+async function executeCommand(conn: Client, command: string): Promise<string> {
+    const stream = await new Promise<ClientChannel>((resolve, reject) => {
         conn.exec(command, (err, stream) => {
             if (err) {
-                return reject(new Error("Command execution failed: " + err.message));
+                return reject(new Error(`Command execution failed: ${err.message}`));
             }
-
-            let stdout = "";
-            let stderr = "";
-
-            stream
-                .on("close", (code: number, signal: string | null) => {
-                    conn.end(); // Close connection
-                    if (stderr) {
-                        return reject(new Error("Error output: " + stderr));
-                    }
-                    resolve(stdout);
-                })
-                .on("data", (data: Buffer) => {
-                    stdout += data.toString();
-                })
-                .stderr.on("data", (data: Buffer) => {
-                    stderr += data.toString();
-                });
+            resolve(stream);
         });
     });
+
+    let stdout = "";
+    let stderr = "";
+
+    stream.on("data", (data: Buffer) => {
+        stdout += data.toString();
+    });
+
+    stream.stderr.on("data", (data: Buffer) => {
+        stderr += data.toString();
+    });
+
+    await once(stream, "close");
+
+    if (stderr) {
+        throw new Error(`Command execution failed with error: ${stderr}`);
+    }
+
+    return stdout;
 }
 
 /**
@@ -130,15 +125,10 @@ function executeCommand(conn: Client, command: string): Promise<string> {
  *   });
  */
 export async function runSSHCommand(command: string, options: SSHOptions): Promise<string> {
+    const conn = await createSSHConnection(options);
     try {
-        const conn = await createSSHConnection(options);
-        const output = await executeCommand(conn, command);
-        return output;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            throw new Error("SSH command execution failed: " + error.message);
-        }
-
-        throw error;
+        return await executeCommand(conn, command);
+    } finally {
+        conn.end();
     }
 }

@@ -26,7 +26,7 @@ const sshOptions = {
 // };
 
 // Instantiate the UqmiClient
-const uqmi = new UqmiClient("cdc-wdm0", sshOptions);
+const uqmi = new UqmiClient("/dev/cdc-wdm0", sshOptions);
 
 // Example function to get device versions
 async function getDeviceVersions() {

@@ -1,17 +1,19 @@
-import { SSHOptions } from "./types";
+import { SSHOptions, UqmiClientOptions } from "./types";
 /**
  * Class representing a Uqmi client for managing network-related commands via SSH.
  */
 export declare class UqmiClient {
     protected device: string;
     protected sshOptions: SSHOptions;
+    protected uqmiClientOptions: UqmiClientOptions;
     /**
      * Creates an instance of UqmiClient.
      * @param {string} device - The device identifier.
      * @param {SSHOptions} sshOptions - SSH options for connection.
+     * @param {UqmiClientOptions} [uqmiClientOptions] - Optional UqmiClient options.
      * @throws {Error} If the device is not specified.
      */
-    constructor(device: string, sshOptions: SSHOptions);
+    constructor(device: string, sshOptions: SSHOptions, uqmiClientOptions?: UqmiClientOptions);
     /**
      * Escapes shell arguments to prevent command injection.
      * This function escapes dangerous characters and ensures that inputs are safe.
@@ -291,5 +293,6 @@ export declare class UqmiClient {
      * @returns {Promise<string>} The current data format.
      */
     getDataFormat(): Promise<string>;
+    getServingSystem(): Promise<string>;
 }
 //# sourceMappingURL=uqmiClient.d.ts.map

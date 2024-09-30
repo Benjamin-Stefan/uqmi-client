@@ -1,4 +1,4 @@
-import { SSHOptions } from "./types";
+import { SSHOptions, UqmiClientOptions } from "./types";
 import { runSSHCommand } from "./utils/ssh";
 
 /**
@@ -7,19 +7,35 @@ import { runSSHCommand } from "./utils/ssh";
 export class UqmiClient {
     protected device!: string;
     protected sshOptions!: SSHOptions;
+    protected uqmiClientOptions!: UqmiClientOptions;
 
     /**
      * Creates an instance of UqmiClient.
      * @param {string} device - The device identifier.
      * @param {SSHOptions} sshOptions - SSH options for connection.
+     * @param {UqmiClientOptions} [uqmiClientOptions] - Optional UqmiClient options.
      * @throws {Error} If the device is not specified.
      */
-    constructor(device: string, sshOptions: SSHOptions) {
+    constructor(device: string, sshOptions: SSHOptions, uqmiClientOptions?: UqmiClientOptions) {
         if (!device) {
             throw new Error("Device must be specified");
         }
+
         this.device = device;
         this.sshOptions = sshOptions;
+
+        // Default option values
+        this.uqmiClientOptions = {
+            timeout: 10000, // Default timeout
+        };
+
+        // Override default options with the provided values (if they are not null/undefined)
+        if (uqmiClientOptions) {
+            this.uqmiClientOptions = {
+                ...this.uqmiClientOptions,
+                ...Object.fromEntries(Object.entries(uqmiClientOptions).filter(([, value]) => value !== null && value !== undefined)),
+            };
+        }
     }
 
     /**
@@ -42,14 +58,23 @@ export class UqmiClient {
      */
     protected async runCommand(args: string[]): Promise<string> {
         try {
+            if (this.uqmiClientOptions.timeout) {
+                args.unshift(`${this.uqmiClientOptions.timeout}`);
+                args.unshift(`--timeout`);
+            }
+
             args.unshift(`--device=${this.device}`);
 
             // Escape all arguments before concatenating them into a single command string
-            const escapedArgs = args.map(this.escapeShellArg).join(" ");
+            const escapedArgs = args.map((arg) => this.escapeShellArg(arg)).join(" ");
+
             const stdout = await runSSHCommand(`uqmi ${escapedArgs}`, this.sshOptions);
             return stdout.trim();
         } catch (error) {
-            throw new Error(`Error executing uqmi command: ${error}`);
+            if (error instanceof Error) {
+                throw new Error(`Error executing uqmi command: ${error}`);
+            }
+            throw error;
         }
     }
 
@@ -101,6 +126,7 @@ export class UqmiClient {
         const args = [`--start-network`, `--apn=${apn}`, `--auth-type=${authType}`, `--ip-family=${ipFamily}`];
         if (username) args.push(`--username=${username}`);
         if (password) args.push(`--password=${password}`);
+
         return this.runCommand(args);
     }
 
@@ -438,6 +464,7 @@ export class UqmiClient {
         let args = [`--send-message ${message}`, `--send-message-target ${destinationNumber}`];
         if (flash) args.push(" --send-message-flash");
         if (smsc) args.push(` --send-message-smsc ${smsc}`);
+
         return this.runCommand(args);
     }
 
@@ -456,5 +483,13 @@ export class UqmiClient {
      */
     public async getDataFormat(): Promise<string> {
         return this.runCommand(["--wda-get-data-format"]);
+    }
+
+    /**
+     * Retrieves the serving system information.
+     * @returns {Promise<string>} The current serving system.
+     */
+    public async getServingSystem(): Promise<string> {
+        return this.runCommand(["--get-serving-system"]);
     }
 }

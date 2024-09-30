@@ -44,4 +44,7 @@ export interface SSHOptions {
  * const myService: ServiceType = "sms";
  */
 export type ServiceType = "wds" | "nas" | "uim" | "sms" | "voice" | "dms" | "gps";
+export interface UqmiClientOptions {
+    timeout?: number;
+}
 //# sourceMappingURL=types.d.ts.map

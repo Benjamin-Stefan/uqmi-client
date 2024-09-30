@@ -4,11 +4,22 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/Benjamin-Stefan/uqmi-client/ci.yml?branch=main)](https://github.com/Benjamin-Stefan/uqmi-client/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-UqmiClient is a Node.js library for managing network-related commands over SSH, specifically designed to work with UQMI-compatible devices.
+**UqmiClient** is a Node.js library for managing network-related commands over SSH, specifically designed to work with UQMI-compatible devices.
+
+## Table of Contents
+
+-   [Installation](#-installation)
+-   [Usage](#-usage)
+    -   [SSH options](#ssh-options)
+    -   [Default options](#default-options)
+-   [Finding Device Name](#-finding-device-name)
+-   [Examples](#-examples)
+-   [Contributing](#-contributing)
+-   [License](#-license)
 
 ## 🛠 Installation
 
-You can install UqmiClient via npm:
+Install UqmiClient via npm:
 
 ```bash
 npm install uqmi-client
@@ -21,8 +32,8 @@ Here’s an example of how to use the library to start a network session:
 ```javascript
 import { UqmiClient } from "uqmi-client";
 
-const client = new UqmiClient("cdc-wdm0", {
-    host: "192.168.1.1",
+const client = new UqmiClient("/dev/cdc-wdm0", {
+    host: "192.168.0.1",
     port: 22,
     username: "user",
     password: "password",
@@ -62,6 +73,19 @@ export interface SSHOptions {
 }
 ```
 
+### Default options
+
+```typescript
+/**
+ * Options for configuring the Uqmi client, allowing for optional settings like timeout.
+ *
+ * @property {number} [timeout] - The timeout period (in milliseconds) for operations performed by the uqmi cli.
+ */
+export interface UqmiClientOptions {
+    timeout?: number;
+}
+```
+
 ## 🔍 Finding Device Name
 
 To identify the device name, run the following command on the target device:
@@ -70,7 +94,7 @@ To identify the device name, run the following command on the target device:
 ls /dev
 ```
 
-In most cases, the device name is something like `cdc-wdm0`.
+Typically, the device name will be something like `cdc-wdm0`.
 
 ## 🧪 Examples
 

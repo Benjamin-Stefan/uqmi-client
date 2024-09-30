@@ -1,70 +1,62 @@
 // src/utils/ssh.ts
 import { Client } from "ssh2";
-import { readFileSync } from "fs";
-function createSSHConnection(options) {
-  return new Promise((resolve, reject) => {
-    const conn = new Client();
-    const connectOptions = {
-      host: options.host,
-      port: options.port || 22,
-      username: options.username
-    };
-    if (options.password) {
-      connectOptions.password = options.password;
-    } else if (options.privateKeyPath) {
-      try {
-        connectOptions.privateKey = readFileSync(options.privateKeyPath);
-      } catch (error) {
-        if (error instanceof Error) {
-          return reject(new Error("Error loading private key: " + error.message));
-        }
-        throw error;
-      }
-      if (options.passphrase) {
-        connectOptions.passphrase = options.passphrase;
-      }
-    } else {
-      return reject(new Error("Password or private key must be provided."));
+import { promises as fs } from "fs";
+import { once } from "events";
+async function createSSHConnection(options) {
+  const conn = new Client();
+  const connectOptions = {
+    host: options.host,
+    port: options.port || 22,
+    username: options.username,
+    readyTimeout: 2e4
+  };
+  if (options.password) {
+    connectOptions.password = options.password;
+  } else if (options.privateKeyPath) {
+    try {
+      connectOptions.privateKey = await fs.readFile(options.privateKeyPath);
+    } catch (error) {
+      throw new Error(`Error loading private key: ${error.message}`);
     }
-    conn.on("ready", () => {
-      resolve(conn);
-    }).on("error", (err) => {
-      reject(new Error("Connection error: " + err.message));
-    }).connect(connectOptions);
-  });
+    if (options.passphrase) {
+      connectOptions.passphrase = options.passphrase;
+    }
+  } else {
+    throw new Error("Password or private key must be provided.");
+  }
+  conn.connect(connectOptions);
+  await once(conn, "ready");
+  return conn;
 }
-function executeCommand(conn, command) {
-  return new Promise((resolve, reject) => {
-    conn.exec(command, (err, stream) => {
+async function executeCommand(conn, command) {
+  const stream = await new Promise((resolve, reject) => {
+    conn.exec(command, (err, stream2) => {
       if (err) {
-        return reject(new Error("Command execution failed: " + err.message));
+        return reject(new Error(`Command execution failed: ${err.message}`));
       }
-      let stdout = "";
-      let stderr = "";
-      stream.on("close", (code, signal) => {
-        conn.end();
-        if (stderr) {
-          return reject(new Error("Error output: " + stderr));
-        }
-        resolve(stdout);
-      }).on("data", (data) => {
-        stdout += data.toString();
-      }).stderr.on("data", (data) => {
-        stderr += data.toString();
-      });
+      resolve(stream2);
     });
   });
+  let stdout = "";
+  let stderr = "";
+  stream.on("data", (data) => {
+    stdout += data.toString();
+  });
+  stream.stderr.on("data", (data) => {
+    stderr += data.toString();
+  });
+  await once(stream, "close");
+  if (stderr) {
+    throw new Error(`Command execution failed with error: ${stderr}`);
+  }
+  return stdout;
 }
 async function runSSHCommand(command, options) {
+  const conn = await createSSHConnection(options);
   try {
-    const conn = await createSSHConnection(options);
-    const output = await executeCommand(conn, command);
-    return output;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error("SSH command execution failed: " + error.message);
-    }
-    throw error;
+    return await executeCommand(conn, command);
+  } finally {
+    conn.end();
   }
 }
 
@@ -74,14 +66,25 @@ var UqmiClient = class {
    * Creates an instance of UqmiClient.
    * @param {string} device - The device identifier.
    * @param {SSHOptions} sshOptions - SSH options for connection.
+   * @param {UqmiClientOptions} [uqmiClientOptions] - Optional UqmiClient options.
    * @throws {Error} If the device is not specified.
    */
-  constructor(device, sshOptions) {
+  constructor(device, sshOptions, uqmiClientOptions) {
     if (!device) {
       throw new Error("Device must be specified");
     }
     this.device = device;
     this.sshOptions = sshOptions;
+    this.uqmiClientOptions = {
+      timeout: 1e4
+      // Default timeout
+    };
+    if (uqmiClientOptions) {
+      this.uqmiClientOptions = {
+        ...this.uqmiClientOptions,
+        ...Object.fromEntries(Object.entries(uqmiClientOptions).filter(([, value]) => value !== null && value !== void 0))
+      };
+    }
   }
   /**
    * Escapes shell arguments to prevent command injection.
@@ -101,12 +104,19 @@ var UqmiClient = class {
    */
   async runCommand(args) {
     try {
+      if (this.uqmiClientOptions.timeout) {
+        args.unshift(`${this.uqmiClientOptions.timeout}`);
+        args.unshift(`--timeout`);
+      }
       args.unshift(`--device=${this.device}`);
-      const escapedArgs = args.map(this.escapeShellArg).join(" ");
+      const escapedArgs = args.map((arg) => this.escapeShellArg(arg)).join(" ");
       const stdout = await runSSHCommand(`uqmi ${escapedArgs}`, this.sshOptions);
       return stdout.trim();
     } catch (error) {
-      throw new Error(`Error executing uqmi command: ${error}`);
+      if (error instanceof Error) {
+        throw new Error(`Error executing uqmi command: ${error}`);
+      }
+      throw error;
     }
   }
   /**
@@ -469,6 +479,9 @@ var UqmiClient = class {
    */
   async getDataFormat() {
     return this.runCommand(["--wda-get-data-format"]);
+  }
+  async getServingSystem() {
+    return this.runCommand(["--get-serving-system"]);
   }
 };
 export {
