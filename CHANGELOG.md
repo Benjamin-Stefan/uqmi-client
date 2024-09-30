@@ -1,3 +1,15 @@
+### Version: 1.1.0  
+Released on: 2024-09-30
+
+
+### 🚀 Features
+
+* update ssh.ts, add new parameter and method to uqmiClient, add unit tests, and update ci.yml ([f8bab58b42ba380991180f80aba41d3755821b24](/commit/f8bab58b42ba380991180f80aba41d3755821b24))
+
+
+
+---
+
 ### Version: 1.0.2  
 Released on: 2024-09-28
 
