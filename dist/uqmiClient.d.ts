@@ -293,6 +293,10 @@ export declare class UqmiClient {
      * @returns {Promise<string>} The current data format.
      */
     getDataFormat(): Promise<string>;
+    /**
+     * Retrieves the serving system information.
+     * @returns {Promise<string>} The current serving system.
+     */
     getServingSystem(): Promise<string>;
 }
 //# sourceMappingURL=uqmiClient.d.ts.map

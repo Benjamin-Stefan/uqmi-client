@@ -44,6 +44,16 @@ export interface SSHOptions {
  * const myService: ServiceType = "sms";
  */
 export type ServiceType = "wds" | "nas" | "uim" | "sms" | "voice" | "dms" | "gps";
+/**
+ * Options for configuring the Uqmi client, allowing for optional settings like timeout.
+ *
+ * @property {number} [timeout] - The timeout period (in milliseconds) for operations performed by the uqmi cli.
+ *
+ * @example
+ * const uqmiOptions: UqmiClientOptions = {
+ *   timeout: 10000,
+ * };
+ */
 export interface UqmiClientOptions {
     timeout?: number;
 }

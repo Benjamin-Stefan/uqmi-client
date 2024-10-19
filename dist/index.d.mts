@@ -26,6 +26,16 @@ interface SSHOptions {
     privateKeyPath?: string;
     passphrase?: string;
 }
+/**
+ * Options for configuring the Uqmi client, allowing for optional settings like timeout.
+ *
+ * @property {number} [timeout] - The timeout period (in milliseconds) for operations performed by the uqmi cli.
+ *
+ * @example
+ * const uqmiOptions: UqmiClientOptions = {
+ *   timeout: 10000,
+ * };
+ */
 interface UqmiClientOptions {
     timeout?: number;
 }
@@ -324,6 +334,10 @@ declare class UqmiClient {
      * @returns {Promise<string>} The current data format.
      */
     getDataFormat(): Promise<string>;
+    /**
+     * Retrieves the serving system information.
+     * @returns {Promise<string>} The current serving system.
+     */
     getServingSystem(): Promise<string>;
 }
 

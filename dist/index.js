@@ -506,6 +506,10 @@ var UqmiClient = class {
   async getDataFormat() {
     return this.runCommand(["--wda-get-data-format"]);
   }
+  /**
+   * Retrieves the serving system information.
+   * @returns {Promise<string>} The current serving system.
+   */
   async getServingSystem() {
     return this.runCommand(["--get-serving-system"]);
   }
