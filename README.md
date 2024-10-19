@@ -8,15 +8,24 @@
 
 ## Table of Contents
 
--   [Installation](#-installation)
--   [Usage](#-usage)
-    -   [SSH options](#ssh-options)
-    -   [Default options](#default-options)
--   [Finding Device Name](#-finding-device-name)
--   [Examples](#-examples)
--   [Supported Commands](#supported-commands)
--   [Contributing](#-contributing)
--   [License](#-license)
+- [UqmiClient](#uqmiclient)
+  - [Table of Contents](#table-of-contents)
+  - [🛠 Installation](#-installation)
+  - [🚀 Usage](#-usage)
+    - [SSH options](#ssh-options)
+    - [Default options](#default-options)
+  - [🔍 Finding Device Name](#-finding-device-name)
+  - [🧪 Examples](#-examples)
+  - [⚙️ Supported Commands](#️-supported-commands)
+    - [General Commands](#general-commands)
+    - [Network Management](#network-management)
+    - [SIM and PIN Management](#sim-and-pin-management)
+    - [Device and Signal Information](#device-and-signal-information)
+    - [SMS Management](#sms-management)
+    - [Data Format](#data-format)
+    - [Additional Operations](#additional-operations)
+  - [🤝 Contributing](#-contributing)
+  - [📜 License](#-license)
 
 ## 🛠 Installation
 
