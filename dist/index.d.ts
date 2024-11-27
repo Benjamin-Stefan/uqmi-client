@@ -27,6 +27,23 @@ interface SSHOptions {
     passphrase?: string;
 }
 /**
+ * Enum-like type that defines various service types supported by the system.
+ *
+ * ServiceType represents a set of valid services that can be interacted with. Each service type
+ * is represented as a string and can be one of the following:
+ * - "wds": Wireless data service
+ * - "nas": Network access service
+ * - "uim": User identity module service
+ * - "sms": Short message service
+ * - "voice": Voice service
+ * - "dms": Device management service
+ * - "gps": Global positioning service
+ *
+ * @example
+ * const myService: ServiceType = "sms";
+ */
+type ServiceType = "wds" | "nas" | "uim" | "sms" | "voice" | "dms" | "gps";
+/**
  * Options for configuring the Uqmi client, allowing for optional settings like timeout.
  *
  * @property {number} [timeout] - The timeout period (in milliseconds) for operations performed by the uqmi cli.
@@ -341,4 +358,4 @@ declare class UqmiClient {
     getServingSystem(): Promise<string>;
 }
 
-export { UqmiClient };
+export { type SSHOptions, type ServiceType, UqmiClient, type UqmiClientOptions };

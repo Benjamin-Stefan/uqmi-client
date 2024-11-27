@@ -29,7 +29,6 @@ export interface SSHOptions {
 /**
  * Enum-like type that defines various service types supported by the system.
  *
- * @description
  * ServiceType represents a set of valid services that can be interacted with. Each service type
  * is represented as a string and can be one of the following:
  * - "wds": Wireless data service
