@@ -28,4 +28,4 @@ const myService: ServiceType = "sms";
 
 ## Defined in
 
-[types.ts:46](https://github.com/Benjamin-Stefan/uqmi-client/blob/bed165b1dfebe40d1bc32d916791573433b4c73b/src/types.ts#L46)
+[types.ts:46](https://github.com/Benjamin-Stefan/uqmi-client/blob/77e1ab46947638604a5a52f0e283e656508ff4c1/src/types.ts#L46)
