@@ -5,14 +5,38 @@ updates:
       directory: "/"
       schedule:
           interval: "weekly"
-      open-pull-requests-limit: 1
+          day: "saturday"
+          time: "06:00"
+          timezone: "Europe/Berlin"
+      open-pull-requests-limit: 5
+      commit-message:
+          prefix: "chore(deps)"
+          prefix-development: "chore(deps-dev)"
+      labels:
+          - "dependencies"
       groups:
-          dev-dependencies:
-              patterns:
-                  - "devDependencies"
+          production-dependencies:
+              dependency-type: "production"
+              update-types:
+                  - "minor"
+                  - "patch"
+          development-dependencies:
+              dependency-type: "development"
+              update-types:
+                  - "minor"
+                  - "patch"
 
     # GitHub Actions updates
     - package-ecosystem: "github-actions"
       directory: "/"
       schedule:
           interval: "weekly"
+          day: "saturday"
+          time: "06:00"
+          timezone: "Europe/Berlin"
+      open-pull-requests-limit: 5
+      commit-message:
+          prefix: "chore(ci)"
+      labels:
+          - "github-actions"
+          - "dependencies"
