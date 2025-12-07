@@ -70,7 +70,13 @@ Released on: {{date}}
                 changelogFile: "CHANGELOG.md",
             },
         ],
-        "@semantic-release/npm",
+        [
+            "@semantic-release/npm",
+            {
+                npmPublish: true,
+                pkgRoot: ".",
+            },
+        ],
         "@semantic-release/github",
         [
             "@semantic-release/git",
