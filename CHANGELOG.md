@@ -1,3 +1,24 @@
+### Version: 1.1.1  
+Released on: 2025-12-07
+
+
+### chore
+
+* update all dependencies to latest versions ([d5058fb6ccb2179b59160735dcd80e29cb73ea6e](/commit/d5058fb6ccb2179b59160735dcd80e29cb73ea6e))
+
+### 🐛 Bug Fixes
+
+* add head_branch check to release workflow ([ec175b56e72971314834664a93524f9a3602753c](/commit/ec175b56e72971314834664a93524f9a3602753c))
+
+### 📚 Documentation
+
+* update README.md ([f61ce5bb1d135651fa446472607e5f4044245d9f](/commit/f61ce5bb1d135651fa446472607e5f4044245d9f))
+* update README.md and regenerate documentation ([1b7f2d5a8bfc47c13eef29383234ce778f18b5c5](/commit/1b7f2d5a8bfc47c13eef29383234ce778f18b5c5))
+
+
+
+---
+
 ### Version: 1.1.0  
 Released on: 2024-09-30
 
